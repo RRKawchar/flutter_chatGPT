@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_gpt/constants/constants.dart';
 import 'package:flutter_chat_gpt/services/asset_manager.dart';
+import 'package:flutter_chat_gpt/widgets/chat_widget.dart';
+import 'package:flutter_chat_gpt/widgets/text_widget.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -30,7 +32,31 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
         title: const Text("ChatGPT"),
         actions: [
-          IconButton(onPressed: (){}, icon: Icon(Icons.more_rounded,color: Colors.white,))
+          IconButton(
+              onPressed: () async{
+
+                await showModalBottomSheet(
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(20)
+                    )
+                  ),
+                    backgroundColor: scaffoldBackgroundColor,
+                    context: context, builder: (context){
+                  return Padding(
+                    padding: const EdgeInsets.all(18.0),
+                    child: Row(
+                      children: const [
+                        Flexible(child: TextWidget(label: 'Chosen Model',fonSize: 16,))
+                      ],
+                    ),
+                  );
+                });
+              },
+              icon: const Icon(
+                Icons.more_vert,
+                color: Colors.white,
+              ))
         ],
       ),
       body: SafeArea(
@@ -40,7 +66,10 @@ class _ChatScreenState extends State<ChatScreen> {
               child: ListView.builder(
                   itemCount: 6,
                   itemBuilder: (context, index) {
-                    return const Text("Hello this is a text");
+                    return  ChatWidget(
+                      msg: chatMessages[index]['msg'].toString(),
+                      index: int.parse(chatMessages[index]['chatIndex'].toString()),
+                    );
                   }),
             ),
             if (_isTyping) ...[
@@ -48,7 +77,9 @@ class _ChatScreenState extends State<ChatScreen> {
                 color: Colors.white,
                 size: 18.0,
               ),
-              const SizedBox(height: 15,),
+              const SizedBox(
+                height: 15,
+              ),
               Material(
                 color: cardColor,
                 child: Padding(
@@ -56,16 +87,23 @@ class _ChatScreenState extends State<ChatScreen> {
                   child: Row(
                     children: [
                       Expanded(
-                          child: TextField(
-                            style: const TextStyle(color: Colors.white),
-                        controller: textEditingController,
-                        onSubmitted: (value) {},
-                        decoration: const InputDecoration.collapsed(
-                          hintText: 'How can I help you?',
-                          hintStyle: TextStyle(color: Colors.grey),
+                        child: TextField(
+                          style: const TextStyle(color: Colors.white),
+                          controller: textEditingController,
+                          onSubmitted: (value) {},
+                          decoration: const InputDecoration.collapsed(
+                            hintText: 'How can I help you?',
+                            hintStyle: TextStyle(color: Colors.grey),
+                          ),
                         ),
-                      ),),
-                      IconButton(onPressed: (){}, icon: const Icon(Icons.send,color: Colors.white,))
+                      ),
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.send,
+                          color: Colors.white,
+                        ),
+                      )
                     ],
                   ),
                 ),
