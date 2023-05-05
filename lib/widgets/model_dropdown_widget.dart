@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_gpt/constants/constants.dart';
 import 'package:flutter_chat_gpt/models/models_model.dart';
+import 'package:flutter_chat_gpt/providers/models_providers.dart';
 import 'package:flutter_chat_gpt/services/api_service.dart';
 import 'package:flutter_chat_gpt/widgets/text_widget.dart';
+import 'package:provider/provider.dart';
 
 class ModelsDropDownWidget extends StatefulWidget {
   const ModelsDropDownWidget({Key? key}) : super(key: key);
@@ -12,11 +14,13 @@ class ModelsDropDownWidget extends StatefulWidget {
 }
 
 class _ModelsDropDownWidgetState extends State<ModelsDropDownWidget> {
-  String currentModels = 'code-davinci-edit-001';
+  String? currentModels;
   @override
   Widget build(BuildContext context) {
+    final modelsProviders=Provider.of<ModelsProvider>(context,listen: false);
+    currentModels=modelsProviders.getCurrentModel;
     return FutureBuilder<List<ModelsModel>>(
-        future: ApiService.getModel(),
+        future: modelsProviders.getAllModels(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Center(
@@ -44,6 +48,7 @@ class _ModelsDropDownWidgetState extends State<ModelsDropDownWidget> {
                       setState(() {
                         currentModels = value.toString();
                       });
+                      modelsProviders.setCurrentModel(value.toString());
                     },
                   ),
               );
